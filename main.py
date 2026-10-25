@@ -12,7 +12,7 @@ def live(self):
     global popup
 
     if popup == None or not popup.exists():
-        popup = CustomPopup("live loading")
+        popup = CustomPopup("live loading",True)
 
     if self._live_running == False:
 
@@ -24,17 +24,20 @@ def live(self):
                 if stop_event.is_set():
                     break
 
-                result = video_detect()
-                audio_detect() #TO-DO
+                video_result = video_detect()
+                audio_result = audio_detect() 
 
                 if stop_event.is_set():
                     break
 
-                if result == -1.0:
+                if video_result == -1.0:
                     popup.update_message("No face detected")
                 else:
                     popup.update_message("The chance of this face\nbeing real is")
-                    popup.update_chart(result)
+                    popup.update_chart(video_result)
+
+                popup.update_message2("The chance of this audio\nbeing real is")
+                popup.update_chart2(audio_result)
 
             if stop_event.is_set():
                 popup.destroy()
@@ -73,7 +76,10 @@ def file_detect(self):
     if result == -1.0:
         popup.update_message("No face detected")
     else:
-        popup.update_message("The chance of this face\nbeing real is")
+        if self.kind == "Audio":
+            popup.update_message("The chance of this audio\nbeing real is")
+        else:
+            popup.update_message("The chance of this face\nbeing real is")
         popup.update_chart(result)
 
 app = App(_on_file_detection_click=lambda: file_detect(app), _on_live_button_click=lambda: live(app))

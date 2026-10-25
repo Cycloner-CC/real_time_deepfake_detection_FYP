@@ -5,5 +5,5 @@ winget install Gyan.FFmpeg
 
 pip install -r requirements.txt
 
-Audio detection have NOT done yet
-Current Video detection is using https://huggingface.co/KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus 
+Current Video/Image detection is using https://huggingface.co/KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus 
+Current Audio detection is using https://huggingface.co/garystafford/wav2vec2-deepfake-voice-detector

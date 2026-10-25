@@ -35,8 +35,8 @@ def merge_audio_video(video_input="desktop_10s.mp4", audio_input="recorded_audio
         print(process.stderr)
 
 def screen_audio_record():
-    vid = threading.Thread(target=screen_record,args=(10,"outputs/video.mp4",))
-    aud = threading.Thread(target=record_audio,args=(10,"outputs/audio.wav"))
+    vid = threading.Thread(target=screen_record,args=(5,"outputs/video.mp4",))
+    aud = threading.Thread(target=record_audio,args=(5,"outputs/audio.wav"))
     vid.start()
     aud.start()
     vid.join()
