@@ -3,6 +3,7 @@ from UI.UI import App
 from screen_cap.main_screen_record import screen_audio_record
 from video_detect import video_detect
 from audio_detect import audio_detect
+from image_detect import image_detect
 from UI.pop_up import CustomPopup
 
 popup = None
@@ -65,7 +66,7 @@ def file_detect(self):
         elif self.kind == "Audio":
             result = audio_detect(self.file_path)
         elif self.kind == "Image":
-            print("to be done")
+            result = image_detect(self.file_path)
         else:
             result = 0
 
