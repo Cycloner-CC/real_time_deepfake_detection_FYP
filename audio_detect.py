@@ -33,7 +33,7 @@ def audio_detect(file="outputs/audio.wav"):
     # print(f"Confidence: {max(prob_real, prob_fake):.2%}")
     # print(f"Probabilities - Real: {prob_real:.2%}, Fake: {prob_fake:.2%}")
 
-    return prob_real
+    return prob_fake
 
 
 if __name__ == "__main__":

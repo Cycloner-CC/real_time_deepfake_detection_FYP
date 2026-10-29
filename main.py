@@ -11,8 +11,8 @@ popup = None
 def live(self):
     global popup
 
-    if popup == None or not popup.exists():
-        popup = CustomPopup("live loading",True)
+    if ( popup == None or not popup.exists() )and self._live_running == False:
+        popup = CustomPopup("live loading")
 
     if self._live_running == False:
 
@@ -21,23 +21,44 @@ def live(self):
 
                 screen_audio_record()
 
-                if stop_event.is_set():
+                if stop_event.is_set() or ( popup == None or not popup.exists() ):
+                    self._live_running = False
+                    self.live_btn.configure(text="●  Start Live Monitoring",
+                                            fg_color="#F87171", hover_color="#DC2626")
                     break
 
                 video_result = video_detect()
                 audio_result = audio_detect() 
 
-                if stop_event.is_set():
+                result = max(video_result,audio_result)
+
+                if stop_event.is_set() or ( popup == None or not popup.exists() ):
+                    self._live_running = False
+                    self.live_btn.configure(text="●  Start Live Monitoring",
+                                            fg_color="#F87171", hover_color="#DC2626")
                     break
 
-                if video_result == -1.0:
-                    popup.update_message("No face detected")
-                else:
-                    popup.update_message("The chance of this face\nbeing real is")
-                    popup.update_chart(video_result)
+                popup.update_message("Fake percent :")
+                popup.update_chart(result)
 
-                popup.update_message2("The chance of this audio\nbeing real is")
-                popup.update_chart2(audio_result)
+                explain_message = ""
+                if video_result == -1:
+                    explain_message += "No face detected but audio checked \n"
+                elif video_result > 0.5:
+                    explain_message += f"Fake live video detected ({video_result* 100:.0f}%) \n"
+
+                if audio_result > 0.5:
+                    explain_message += f"Fake live audio detected ({audio_result* 100:.0f}%) \n"
+
+                if result <= 0.4:
+                    explain_message += "The current live should be real"
+                elif result <= 0.6 :
+                    explain_message += "The current live is uncertain"
+                else:
+                    explain_message += "The current live is fake"
+
+                popup.update_explain_message(explain_message)
+                    
 
             if stop_event.is_set():
                 popup.destroy()
@@ -76,10 +97,7 @@ def file_detect(self):
     if result == -1.0:
         popup.update_message("No face detected")
     else:
-        if self.kind == "Audio":
-            popup.update_message("The chance of this audio\nbeing real is")
-        else:
-            popup.update_message("The chance of this face\nbeing real is")
+        popup.update_message("Fake percent :")
         popup.update_chart(result)
 
 app = App(_on_file_detection_click=lambda: file_detect(app), _on_live_button_click=lambda: live(app))

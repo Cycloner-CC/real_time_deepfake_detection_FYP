@@ -3,17 +3,14 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 class CustomPopup:
-    def __init__(self, message_text: str, double = False):
+    def __init__(self, message_text: str):
 
         # Initialize the popup window
         self.popup = ctk.CTkWidget() if hasattr(ctk, 'CTkWidget') else ctk.CTkToplevel()
         
         # 1. Window Styling & Always-on-Top Configuration
         self.popup.title("Deepfake Detection")
-        if double:
-            self.popup.geometry("380x850")
-        else:
-            self.popup.geometry("380x500")
+        self.popup.geometry("380x720")
         self.popup.configure(fg_color="#0a1120")  # Dark blue-black background
         self.popup.attributes("-topmost", True)   # Keeps the window always on top
         
@@ -57,29 +54,17 @@ class CustomPopup:
 
         self.update_chart(0.0)
 
-        if double :
-            # Divider line
-            divider2 = ctk.CTkFrame(main_frame, fg_color="#334155", height=2)
-            divider2.pack(fill="x", pady=(0, 20))
+        explain_text = ctk.CTkLabel(main_frame, text="Explanation:", text_color="#ffffff",
+                                                                font=("Arial", 20, "bold"), anchor="w", justify="left")
+        explain_text.pack(fill=ctk.BOTH, padx=15, pady=(15, 5))
 
-            self.passed_text_label2 = ctk.CTkLabel(main_frame, text=message_text, text_color="#ffffff", width=100,
-                                                    font=("Arial", 20, "bold"), anchor="w", justify="left")
-            self.passed_text_label2.pack(fill="x", padx=15, pady=(15, 5))
+        display_box2 = ctk.CTkFrame(main_frame, fg_color="#0f172a", border_color="#1e293b", border_width=1, corner_radius=10, height=150)
+        display_box2.pack(fill="x", pady=(0, 15))
+        display_box2.pack_propagate(False)
 
-            # Box showcasing the passed string argument
-            display_box2 = ctk.CTkFrame(main_frame, fg_color="#0f172a", border_color="#1e293b", border_width=1, corner_radius=10, height=300)
-            display_box2.pack(fill="x", pady=(0, 15))
-            display_box2.pack_propagate(False)
-
-            self.fig2 = Figure(figsize=(4, 4), dpi=100)
-            self.fig2.patch.set_facecolor('#0f172a')
-            self.ax2 = self.fig2.add_subplot(111)
-
-            self.canvas2 = FigureCanvasTkAgg(self.fig2, master=display_box2)
-            self.canvas2_widget = self.canvas2.get_tk_widget()
-            self.canvas2_widget.pack(fill=ctk.BOTH, expand=True, padx=20, pady=10)
-
-            self.update_chart2(0.0)
+        self.explain_text_label = ctk.CTkLabel(display_box2, text="", text_color="#ffffff", wraplength=290,
+                                                        font=("Arial", 20, "bold"), anchor="w", justify="left")
+        self.explain_text_label.pack(fill=ctk.BOTH, padx=15, pady=(15, 5))
 
     def update_chart(self,percent):
             try:
@@ -93,7 +78,12 @@ class CustomPopup:
                 sizes = [val, remainder]
                 
                 # 3. Define the custom theme colors (Green and Gray)
-                colors = ['#28a745', '#e0e0e0'] 
+                if percent <= 0.4:
+                    colors = ['#28a745', '#e0e0e0'] 
+                elif percent <= 0.6:
+                    colors = ["#a77828", '#e0e0e0'] 
+                else:
+                    colors = ["#a72828", '#e0e0e0'] 
     
                 # 4. Redraw the Matplotlib Donut Chart
                 self.ax.clear()
@@ -117,49 +107,13 @@ class CustomPopup:
             except ValueError:
                 print("Invalid Input", "Please enter a valid decimal number between 0.0 and 1.0")
 
-    def update_chart2(self,percent):
-            try:
-                # 1. Parse and validate the single input number
-                val = float(percent)
-                if not (0.0 <= val <= 1.0):
-                    raise ValueError("Value must be between 0 and 1")
-                
-                # 2. Calculate the remainder
-                remainder = 1.0 - val
-                sizes = [val, remainder]
-                
-                # 3. Define the custom theme colors (Green and Gray)
-                colors = ['#28a745', '#e0e0e0'] 
-    
-                # 4. Redraw the Matplotlib Donut Chart
-                self.ax2.clear()
-                
-                # The 'wedgeprops' parameter sets the width of the ring to make it a donut
-                wedges, texts = self.ax2.pie(
-                    sizes, 
-                    colors=colors, 
-                    startangle=90,          # Starts pointing straight up
-                    counterclock=False,     # Moves clockwise like a progress bar
-                    wedgeprops={'width': 0.3, 'edgecolor': '#f8f9fa', 'linewidth': 2}
-                )
-    
-                # Add text inside the hole of the donut
-                percentage_text = f"{val * 100:.0f}%"
-                self.ax2.text(0, 0, percentage_text, ha='center', va='center', fontsize=24, weight='bold', color="#FFFEFF")
-                
-                self.ax2.axis('equal')  
-                self.canvas2.draw()
-    
-            except ValueError:
-                print("Invalid Input", "Please enter a valid decimal number between 0.0 and 1.0")
-
     def update_message(self, new_text: str):
         if self.popup.winfo_exists():  # Ensures the window is still open before trying to update
             self.passed_text_label.configure(text=new_text)
 
-    def update_message2(self, new_text: str):
-            if self.popup.winfo_exists():  # Ensures the window is still open before trying to update
-                self.passed_text_label2.configure(text=new_text)
+    def update_explain_message(self, new_text: str):
+        if self.popup.winfo_exists():  # Ensures the window is still open before trying to update
+            self.explain_text_label.configure(text=new_text)
 
     def exists(self):
         return self.popup.winfo_exists()
@@ -177,7 +131,10 @@ if __name__ == "__main__":
     # Call the function with your custom string
     smy_popup = CustomPopup("Analyzing initial data...")
 
-    root.after(3000,lambda:smy_popup.update_chart(0.5))
-    root.after(3000,lambda:smy_popup.update_chart2(0.2))
+    root.after(2000,lambda:smy_popup.update_chart(0.3))
+    root.after(2500,lambda:smy_popup.update_chart(0.5))
+    root.after(3000,lambda:smy_popup.update_chart(0.7))
+
+    root.after(3000,lambda:smy_popup.update_explain_message("testwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"))
     
     root.mainloop()

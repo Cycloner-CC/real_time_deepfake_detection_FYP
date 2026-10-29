@@ -23,10 +23,7 @@ def image_detect(file="outputs/image_test.png"):
     # )
     # [{'label': 'fake', 'score': 0.9712}]
 
-    if len(result) > 1 :
-        return result[1]["score"]
-    else :
-        return result[0]["score"]
+    return result[0]["score"]
 
 if __name__ == "__main__":
     print(image_detect("outputs/image_test.png"))

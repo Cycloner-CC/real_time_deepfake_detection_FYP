@@ -22,10 +22,8 @@ def video_detect(file="outputs/video_w_audio.mp4"):
     #     agg_mode="conf",            # Aggregation mode: 'conf' | 'mean' | 'vote' (default: 'conf')
     #     return_frame_scores=True,   # Return per-frame scores (default: False)
     # )
-    if len(result) > 1 :
-        return result[1]["score"]
-    else :
-        return result[0]["score"]
+
+    return result[0]["score"]
     
     # [{'label': 'fake', 'score': 0.9634},
     #  {'label': 'real', 'score': 0.0366},
