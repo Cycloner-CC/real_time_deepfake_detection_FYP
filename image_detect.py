@@ -1,10 +1,12 @@
 from transformers import pipeline
+import torch
 
 
 def image_detect(file="outputs/image_test.png"):
     clf = pipeline(
         "image-classification",
         model="KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus", 
+        device = "cuda" if torch.cuda.is_available() else "cpu",
         trust_remote_code=True,
     )
 

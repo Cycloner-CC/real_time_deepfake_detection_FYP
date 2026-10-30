@@ -1,11 +1,16 @@
 from transformers import pipeline
+import torch
 
-def video_detect(file="outputs/video_w_audio.mp4"):
-    clf = pipeline(
-        "video-classification",
-        model="KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus", 
-        trust_remote_code=True,
-    )
+def video_detect(clf=None,file="outputs/video_w_audio.mp4"):
+    if clf == None:
+        clf = pipeline(
+            "video-classification",
+            model="KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus", 
+            device = "cuda" if torch.cuda.is_available() else "cpu",
+            trust_remote_code=True,
+        )
+    else:
+        clf = clf
 
     # ── Basic Inference ───────────────────────────────────────────────
     result = clf(file)
@@ -30,4 +35,10 @@ def video_detect(file="outputs/video_w_audio.mp4"):
     #  {'frame_scores': [0.97, 0.95, 0.98, ...], 'agg_mode': 'conf'}]
 
 if __name__ == "__main__":
-    print(video_detect())
+    video_model = pipeline(
+                "video-classification",
+                model="KoreaPeter/ms-eff-gcvit-deepfake-b0-ff-plus-plus", 
+                device = "cuda" if torch.cuda.is_available() else "cpu",
+                trust_remote_code=True,
+            )
+    print(video_detect(video_model))

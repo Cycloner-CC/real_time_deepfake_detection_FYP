@@ -2,11 +2,16 @@ import torch
 import librosa
 from transformers import AutoModelForAudioClassification, AutoFeatureExtractor
 
-def audio_detect(file="outputs/audio.wav"):
+def audio_detect(model=None,feature_extractor=None,file="outputs/audio.wav"):
+
     # Load model and feature extractor
-    model_name = "garystafford/wav2vec2-deepfake-voice-detector"
-    model = AutoModelForAudioClassification.from_pretrained(model_name)
-    feature_extractor = AutoFeatureExtractor.from_pretrained(model_name)
+    if model == None or feature_extractor == None:
+        audio_model_name = "garystafford/wav2vec2-deepfake-voice-detector"
+        model = AutoModelForAudioClassification.from_pretrained(audio_model_name)
+        feature_extractor = AutoFeatureExtractor.from_pretrained(audio_model_name)
+    else:
+        model = model
+        feature_extractor = feature_extractor
 
     # Move to GPU if available
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -37,4 +42,9 @@ def audio_detect(file="outputs/audio.wav"):
 
 
 if __name__ == "__main__":
+    audio_model_name = "garystafford/wav2vec2-deepfake-voice-detector"
+    audio_model = AutoModelForAudioClassification.from_pretrained(audio_model_name)
+    feature_extractor = AutoFeatureExtractor.from_pretrained(audio_model_name)
+    print(torch.cuda.is_available())
+    print(audio_detect(audio_model,feature_extractor))
     print(audio_detect())

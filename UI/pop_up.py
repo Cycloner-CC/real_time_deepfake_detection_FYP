@@ -58,7 +58,7 @@ class CustomPopup:
                                                                 font=("Arial", 20, "bold"), anchor="w", justify="left")
         explain_text.pack(fill=ctk.BOTH, padx=15, pady=(15, 5))
 
-        display_box2 = ctk.CTkFrame(main_frame, fg_color="#0f172a", border_color="#1e293b", border_width=1, corner_radius=10, height=150)
+        display_box2 = ctk.CTkFrame(main_frame, fg_color="#0f172a", border_color="#1e293b", border_width=1, corner_radius=10, height=170)
         display_box2.pack(fill="x", pady=(0, 15))
         display_box2.pack_propagate(False)
 
